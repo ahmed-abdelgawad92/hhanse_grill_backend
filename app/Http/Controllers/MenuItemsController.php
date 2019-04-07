@@ -52,11 +52,9 @@ class MenuItemsController extends Controller
         $menu_item->meal_id = $meal->id;
         $menu_item->price = $req["price"];
         $saved = $menu_item->save();
-        foreach ($req['ingredients'] as $value) {
-          $ingredient = new Ingredient;
-          $ingredient->ingredient = mb_strtolower($value);
-          $menu_item->ingredients()->save($ingredient);
-        }
+        $ingredient = new Ingredient;
+        $ingredient->ingredient = $req['ingredients'];
+        $menu_item->ingredients()->save($ingredient);
       } catch (\Exception $e) {
         return response()->json(['errors' => $e->getMessage()], 422);
       }
