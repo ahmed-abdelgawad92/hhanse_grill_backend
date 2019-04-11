@@ -17,7 +17,7 @@ class MenuItemsController extends Controller
       if($date===null){
         $date = date('Y-m-d', time());
       }
-      $items = MenuItem::with('meal','ingredients')->where('date',$date)->orderBy('price','desc')->get();
+      $items = MenuItem::with('meal','ingredients')->where('date',$date)->orderBy('row_order','asc')->get();
 
       return response()->json($items);
     }
@@ -38,12 +38,22 @@ class MenuItemsController extends Controller
       $req = $request->json()->all();
       $rules = [
         'price' => 'required|numeric',
+        'order' => 'required|numeric|between:1,4',
         'meal' => 'required',
         'date' => 'date'
       ];
       $validator = Validator::make($req,$rules);
       if ($validator->fails()) {
-       	return response()->json(['errors'=>$validator->errors(), 422]);
+       	return response()->json(['errors'=>$validator->errors()], 422);
+      }
+      $checkIfMenuNumberExists = MenuItem::whereDate('date', $req['date'])->where('row_order',$req['order'])->first();
+      $m = Meal::where('name',$req['meal'])->first();
+      $checkIfMenuExists = MenuItem::whereDate('date', $req['date'])->where('meal_id',$m->id)->first();
+      if($checkIfMenuNumberExists){
+        return response()->json(['error'=>'Es gibt schon ein Gericht mit der Nummer '.htmlspecialchars($req['order']).' an diesem Datum'], 422);
+      }
+      if($checkIfMenuExists){
+        return response()->json(['error'=>'Es gibt schon das Gericht '.htmlspecialchars($req['meal']).' an diesem Datum'], 422);
       }
       try {
         $meal = Meal::firstOrCreate(['name' => mb_strtolower($req['meal'])]);
@@ -51,6 +61,7 @@ class MenuItemsController extends Controller
         $menu_item->date = $req["date"];
         $menu_item->meal_id = $meal->id;
         $menu_item->price = $req["price"];
+        $menu_item->row_order = $req["order"];
         $saved = $menu_item->save();
         $ingredient = new Ingredient;
         $ingredient->ingredient = $req['ingredients'];
@@ -125,7 +136,7 @@ class MenuItemsController extends Controller
       for($i=0; $i<5; $i++){
         $weekPlan[$i]['meals'] = MenuItem::with('meal','ingredients')
             ->where('date',$weekStart)
-            ->orderBy('price','desc')
+            ->orderBy('row_order','asc')
             ->get();
         $weekPlan[$i]['day'] = $this->days[$i];
         $weekPlan[$i]['date'] = $weekStart;
