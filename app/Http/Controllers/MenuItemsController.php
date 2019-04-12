@@ -35,6 +35,7 @@ class MenuItemsController extends Controller
 
     public function addMenu(Request $request)
     {
+      //return response()->json(['blabla'=>'bla bla bla']);
       $req = $request->json()->all();
       $rules = [
         'price' => 'required|numeric',
@@ -47,13 +48,16 @@ class MenuItemsController extends Controller
        	return response()->json(['errors'=>$validator->errors()], 422);
       }
       $checkIfMenuNumberExists = MenuItem::whereDate('date', $req['date'])->where('row_order',$req['order'])->first();
-      $m = Meal::where('name',$req['meal'])->first();
-      $checkIfMenuExists = MenuItem::whereDate('date', $req['date'])->where('meal_id',$m->id)->first();
       if($checkIfMenuNumberExists){
         return response()->json(['error'=>'Es gibt schon ein Gericht mit der Nummer '.htmlspecialchars($req['order']).' an diesem Datum'], 422);
       }
-      if($checkIfMenuExists){
-        return response()->json(['error'=>'Es gibt schon das Gericht '.htmlspecialchars($req['meal']).' an diesem Datum'], 422);
+
+      $m = Meal::where('name',$req['meal'])->first();
+      if($m){
+        $checkIfMenuExists = MenuItem::whereDate('date', $req['date'])->where('meal_id',$m->id)->first();
+        if($checkIfMenuExists){
+          return response()->json(['error'=>'Es gibt schon das Gericht '.htmlspecialchars($req['meal']).' an diesem Datum'], 422);
+        }
       }
       try {
         $meal = Meal::firstOrCreate(['name' => mb_strtolower($req['meal'])]);
