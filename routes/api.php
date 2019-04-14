@@ -18,7 +18,10 @@ Route::post('/logout', 'AuthController@logout');
 
 Route::get('/menu_items/{date?}',[
   'uses' => 'MenuItemsController@getMenuItems'
-])->where(['date' => '[0-9]{4}-[0-9]{2}-[0-9]{2}']);
+])->where(['date' => '[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}']);
+
+Route::get('/karte', 'KarteController@index');
+Route::get('/karte/slideshow', 'KarteController@getSlideShowItems');
 
 //Authenticated Routes
 Route::group(['middleware' => 'jwt.auth'],function(){
@@ -54,4 +57,21 @@ Route::group(['middleware' => 'jwt.auth'],function(){
   ])->where(['week' => '\-?[0-9]+']);
   //logout
   Route::post('/logout', 'AuthController@logout');
+
+  /*
+  *
+  * Routes for Karte manipulation
+  *
+  */
+  Route::prefix('/karte')->group(function(){
+    //add karte item
+    Route::post('/add', 'KarteController@addItem');
+    //edit karte item
+    Route::put('/edit/{id}', 'KarteController@editItem')->where(['id' => '[0-9]+']);
+    //upload a new photo for a karte item
+    Route::post('/upload_photo/{id}', 'KarteController@uploadPhoto')->where(['id' => '[0-9]+']);
+    //delete karte item
+    Route::delete('/delete/{id}', 'KarteController@deleteItem')->where(['id' => '[0-9]+']);
+  });
+
 });

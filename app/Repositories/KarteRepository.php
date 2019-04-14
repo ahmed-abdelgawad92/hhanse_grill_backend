@@ -1,6 +1,7 @@
 <?php
-namespace App\Repository;
+namespace App\Repositories;
 
+use Illuminate\Support\Facades\Storage;
 use App\Karte;
 
 /**
@@ -15,10 +16,10 @@ class KarteRepository
       $karte->number = $req['number'];
       $karte->category = $req['category'];
       $karte->meal = $req['meal'];
-      $karte->ingredient = $req['ingredient'];
+      $karte->ingredient = $req['ingredients'];
       $karte->price = $req['price'];
-      $karte->photo = $req['photo'];
-      $saved = $karte->save()
+      $karte->photo = $req['photo']->store('public');
+      $saved = $karte->save();
       //check if saved correctly
       if (!$saved) {
         return response()->json(['error' => 'Etwas ist schief gelaufen beim Server, bitte versuchen Sie noch einmal'],410);
@@ -30,13 +31,12 @@ class KarteRepository
   {
       $karte = Karte::findOrFail($id);
       $karte->number = $req['number'];
-      $karte->category = $req['category'];
       $karte->meal = $req['meal'];
-      $karte->ingredient = $req['ingredient'];
+      $karte->ingredient = $req['ingredients'];
       $karte->price = $req['price'];
-      $saved = $karte->save()
+      $saved = $karte->save();
       //check if saved correctly
-      if (!$saved) {
+      if(!$saved) {
         return response()->json(['error' => 'Etwas ist schief gelaufen beim Server, bitte versuchen Sie noch einmal'],410);
       }
       return $karte;
@@ -54,7 +54,17 @@ class KarteRepository
   //upload a photo
   public function uploadPhoto($id, $req)
   {
-
+    $karte = Karte::findOrFail($id);
+    if ($karte->photo != null && Storage::disk('public')->exists($karte->photo)) {
+      Storage::disk('public')->delete($karte->photo);
+    }
+    $karte->photo = $req['photo']->store('public');
+    $saved = $karte->save();
+    //check if saved correctly
+    if (!$saved) {
+      return response()->json(['error' => 'Etwas ist schief gelaufen beim Server, bitte versuchen Sie noch einmal'],410);
+    }
+    return $karte;
   }
   //get item
   public function get($id)
@@ -64,7 +74,7 @@ class KarteRepository
   //get all categories
   public function allCategories()
   {
-      return Karte::select('category')->distinct()->get();
+      return Karte::distinct()->pluck('category');
   }
   //get all
   public function all()

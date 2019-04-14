@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Repositories\KarteRepository;
+use App\Http\Requests\KarteCreateRequest;
+use App\Http\Requests\KarteEditRequest;
+use App\Http\Requests\KarteUploadRequest;
+
 class KarteController extends Controller
 {
     protected $karte;
@@ -12,34 +16,41 @@ class KarteController extends Controller
     {
         $this->karte = $karte;
     }
+
     //get all
     public function index()
     {
+        $karte = [];
         $categories = $this->karte->allCategories();
-        //return response()->json(['karte'=>$karte],200);
-        return response()->json(['karte'=>$categories],200);
+        foreach ($categories as $category) {
+          $karte[$category][] = $category;
+          $karte[$category][] = $this->karte->getAllWithCategory($category);
+        }
+        return response()->json(['karte'=>$karte],200);
     }
 
     //add item
-    public function addItem(Request $request)
+    public function addItem(KarteCreateRequest $request)
     {
-        $req = $request->json()->all();
-        $karte = $this->karte->create($req);
+        $karte = $this->karte->create($request);
         return response()->json(['success' => 'Das Gericht ist erfolgreich zur Karte hinzugefügt'],201);
     }
 
     //update item
-    public function editItem(Request $request, $id)
+    public function editItem(KarteEditRequest $request, $id)
     {
         $req = $request->json()->all();
         $karte = $this->karte->update($id, $req);
-        return response()->json(['success' => 'Das Gericht ist erfolgreich bearbeitet'],201);
+        return response()->json(['success' => 'Das Gericht '.$karte->meal.' ist erfolgreich bearbeitet'],201);
     }
 
     //upload photo
-    public function uploadPhoto(Request $req, $id)
+    public function uploadPhoto(KarteUploadRequest $req, $id)
     {
-      // code...
+        if($this->karte->uploadPhoto($id, $req)){
+          return response()->json(['success' => 'Das Foto ist erfolgreich hochgelagden'], 200);
+        }
+        return response()->json(['error' => 'Etwas ist schief gelaufen beim Server'], 410);
     }
 
     //get items with photos
