@@ -40,6 +40,8 @@ Route::group(['middleware' => 'jwt.auth'],function(){
   Route::post('/add_menu',[
     'uses' => 'MenuItemsController@addMenu'
   ]);
+  //edit menu item
+  Route::put('/edit_menu/{id}', 'MenuItemsController@editMenu')->where(['id' => '[0-9]+']);
   //delete menu item
   Route::delete('/delete_menu_item/{id}',[
     'uses' => 'MenuItemsController@deleteMenu'

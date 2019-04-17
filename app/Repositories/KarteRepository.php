@@ -18,7 +18,7 @@ class KarteRepository
       $karte->meal = $req['meal'];
       $karte->ingredient = $req['ingredients'];
       $karte->price = $req['price'];
-      $karte->photo = $req['photo']->store('public');
+      $karte->photo = $req['photo'] ? $req['photo']->store('public') : null;
       $saved = $karte->save();
       //check if saved correctly
       if (!$saved) {

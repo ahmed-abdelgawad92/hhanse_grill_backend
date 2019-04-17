@@ -25,7 +25,7 @@ class MenuItemsController extends Controller
     //get all meals and ingredients
     public function getAllMealsAndIngredients(){
       $ingredients = Ingredient::select('ingredient')->distinct()->get();
-      $meals = Meal::all();
+      $meals = Meal::select('name')->distinct()->get();
       $data = [
         'meals' => $meals,
         'ingredients' => $ingredients
@@ -74,6 +74,44 @@ class MenuItemsController extends Controller
         return response()->json(['errors' => $e->getMessage()], 422);
       }
       return response()->json(['success' => true], 201);
+    }
+
+    public function editMenu(Request $request, $id)
+    {
+      $req = $request->json()->all();
+      $rules = [
+        'price' => 'required|numeric',
+        'order' => 'required|numeric|between:1,4',
+        'meal' => 'required'
+      ];
+      $validator = Validator::make($req,$rules);
+      if ($validator->fails()) {
+       	return response()->json(['errors'=>$validator->errors()], 422);
+      }
+      $menu_item = MenuItem::findOrFail($id);
+      $meal = $menu_item->meal;
+      $ingredient = $menu_item->ingredients;
+      try{
+        DB::beginTransaction();
+        $menu_item->price = $req['price'];
+        $menu_item->row_order = $req['order'];
+        $meal->name = $req['meal'];
+        $menu_item->save();
+        $meal->save();
+        if($ingredient){
+          $ingredient[0]->ingredient = $req['ingredient'];
+          $ingredient[0]->save();
+        }else{
+          $ingredient = new Ingredient;
+          $ingredient->ingredient = $req['ingredient'];
+          $ingredient->menu_id_id = $id;
+          $ingredient->save();
+        }
+        DB::commit();
+      }catch(Exception $e){
+        return response()->json(['error'=>$e->getMessage()],422);
+      }
+      return response()->json(['success'=>'Das Angebot ist erfolgreich bearbeitet'], 201);
     }
 
     public function deleteMenu($id)
