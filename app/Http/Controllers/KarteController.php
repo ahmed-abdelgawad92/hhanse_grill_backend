@@ -28,6 +28,12 @@ class KarteController extends Controller
         }
         return response()->json(['karte'=>$karte],200);
     }
+    //get all
+    public function getWithCategory($category)
+    {
+        $karte = $this->karte->getAllWithCategory($category);
+        return response()->json(['karte'=>$karte],200);
+    }
 
     //add item
     public function addItem(KarteCreateRequest $request)

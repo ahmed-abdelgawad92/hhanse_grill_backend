@@ -22,6 +22,7 @@ Route::get('/menu_items/{date?}',[
 
 Route::get('/karte', 'KarteController@index');
 Route::get('/karte/slideshow', 'KarteController@getSlideShowItems');
+Route::get('/karte/get/{category}', 'KarteController@getWithCategory');
 
 //Authenticated Routes
 Route::group(['middleware' => 'jwt.auth'],function(){
