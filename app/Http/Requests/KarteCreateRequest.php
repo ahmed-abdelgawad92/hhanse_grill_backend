@@ -37,7 +37,8 @@ class KarteCreateRequest extends FormRequest
                 'Snacks',
                 'Beilagen',
                 'Salate',
-                'Fisch'
+                'Fisch',
+                'Getränke'
               ])
             ],
             'price' => 'required|numeric',
