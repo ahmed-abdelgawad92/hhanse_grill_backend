@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Repositories\KarteRepository;
 use App\Http\Requests\KarteCreateRequest;
 use App\Http\Requests\KarteEditRequest;
