@@ -23,6 +23,11 @@ Route::get('/menu_items/{date?}',[
 Route::get('/karte', 'KarteController@index');
 Route::get('/karte/slideshow', 'KarteController@getSlideShowItems');
 Route::get('/karte/get/{category}', 'KarteController@getWithCategory');
+Route::get('/client/photos', 'ClientPageController@getPhotos');
+//get week plan
+Route::get('/weekplan/{week}',[
+  'uses' => 'MenuItemsController@getWeekPlan'
+])->where(['week' => '\-?[0-9]+']);
 
 //Authenticated Routes
 Route::group(['middleware' => 'jwt.auth'],function(){
@@ -54,10 +59,6 @@ Route::group(['middleware' => 'jwt.auth'],function(){
   Route::put('/deactivate_menu_item/{id}',[
     'uses' => 'MenuItemsController@deactivateMenu'
   ])->where(['id' => '[0-9]+']);
-  //get week plan
-  Route::get('/weekplan/{week}',[
-    'uses' => 'MenuItemsController@getWeekPlan'
-  ])->where(['week' => '\-?[0-9]+']);
   //logout
   Route::post('/logout', 'AuthController@logout');
 
@@ -77,4 +78,13 @@ Route::group(['middleware' => 'jwt.auth'],function(){
     Route::delete('/delete/{id}', 'KarteController@deleteItem')->where(['id' => '[0-9]+']);
   });
 
+  /**
+   * 
+   * Routes for Client Page
+   * 
+   */
+  Route::prefix('/client')->group(function(){
+    Route::post('/photo/upload','ClientPageController@uploadPhoto');
+    Route::delete('/photo/delete/{id}','ClientPageController@delete')->where(['id' => '[0-9]+']);
+  });
 });
