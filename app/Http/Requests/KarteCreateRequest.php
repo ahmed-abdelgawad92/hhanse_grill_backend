@@ -38,7 +38,8 @@ class KarteCreateRequest extends FormRequest
                 'Beilagen',
                 'Salate',
                 'Fisch',
-                'Getränke'
+                'Getränke',
+                'Pasta'
               ])
             ],
             'price' => 'required|numeric',
