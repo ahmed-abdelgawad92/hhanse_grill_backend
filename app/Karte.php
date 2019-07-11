@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class Karte extends Model
 {
@@ -17,6 +18,6 @@ class Karte extends Model
     //query scope get the items based on the category
     public function scopeCategory($query, $value)
     {
-      return $query->where('category',$value)->orderBy('number','asc');
+      return $query->where('category',$value);
     }
 }

@@ -18,6 +18,7 @@ class KarteRepository
       $karte->meal = $req['meal'];
       $karte->ingredient = $req['ingredients'];
       $karte->price = $req['price'];
+      $karte->item_order = $req['item_order'] ?? 0;
       $karte->photo = $req['photo'] ? $req['photo']->store('public') : null;
       $saved = $karte->save();
       //check if saved correctly
@@ -34,6 +35,7 @@ class KarteRepository
       $karte->meal = $req['meal'];
       $karte->ingredient = $req['ingredients'];
       $karte->price = $req['price'];
+      $karte->item_order = $req['item_order'] ?? 0;
       $saved = $karte->save();
       //check if saved correctly
       if(!$saved) {
@@ -89,6 +91,6 @@ class KarteRepository
   //get all items within a category
   public function getAllWithCategory($value)
   {
-      return Karte::category($value)->get();
+      return Karte::category($value)->orderBy('item_order','asc')->get();
   }
 }
