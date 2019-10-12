@@ -19,6 +19,7 @@ class KarteRepository
       $karte->ingredient = $req['ingredients'];
       $karte->price = $req['price'];
       $karte->item_order = $req['item_order'] ?? 0;
+      $karte->vegie = $req['vegie'] ?? 0;
       $karte->photo = $req['photo'] ? $req['photo']->store('public') : null;
       $saved = $karte->save();
       //check if saved correctly
@@ -36,6 +37,7 @@ class KarteRepository
       $karte->ingredient = $req['ingredients'];
       $karte->price = $req['price'];
       $karte->item_order = $req['item_order'] ?? 0;
+      $karte->vegie = $req['vegie'] ?? 0;
       $saved = $karte->save();
       //check if saved correctly
       if(!$saved) {
