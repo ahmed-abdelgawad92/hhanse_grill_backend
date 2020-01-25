@@ -35,6 +35,7 @@ class KarteRepository
       $karte->number = $req['number'];
       $karte->meal = $req['meal'];
       $karte->ingredient = $req['ingredients'];
+      $karte->category = $req['category'];
       $karte->price = $req['price'];
       $karte->item_order = $req['item_order'] ?? 0;
       $karte->vegie = $req['vegie'] ?? 0;

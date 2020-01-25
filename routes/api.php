@@ -78,6 +78,22 @@ Route::group(['middleware' => 'jwt.auth'],function(){
     Route::delete('/delete/{id}', 'KarteController@deleteItem')->where(['id' => '[0-9]+']);
   });
 
+  /*
+  *
+  * Routes for slideshow manipulation
+  *
+  */
+  Route::prefix('/slideshow')->group(function(){
+    //add Slideshow item
+    Route::post('/create', 'SlideshowController@store');
+    //edit Slideshow item
+    Route::put('/edit/{id}', 'SlideshowController@update')->where(['id' => '[0-9]+']);
+    //fetch all Slideshow
+    Route::get('/fetch', 'SlideshowController@index');
+    //delete Slideshow item
+    Route::delete('/delete/{id}', 'SlideshowController@destroy')->where(['id' => '[0-9]+']);
+  });
+
   /**
    * 
    * Routes for Client Page
