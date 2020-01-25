@@ -37,6 +37,7 @@ class KarteRepository
       $karte->ingredient = $req['ingredients'];
       $karte->category = $req['category'];
       $karte->price = $req['price'];
+      $karte->zusatzstoffe = $req['zusatzstoffe'];
       $karte->item_order = $req['item_order'] ?? 0;
       $karte->vegie = $req['vegie'] ?? 0;
       $saved = $karte->save();
